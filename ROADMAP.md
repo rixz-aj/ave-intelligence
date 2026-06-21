@@ -18,6 +18,16 @@ chart on the live site. This phase *defines the contract* everything else confor
 
 **Module:** `packages/core` (this repo) + the web slice in `../nira-app`.
 
+**Progress (2026-06-21)**
+- ✅ Toolchain green (`uv`, ruff, mypy --strict, pytest 13, validator).
+- ✅ Data path: MMA API is auth-gated → built `ingest/mot_pdf` against the public MoT
+  PDFs (column-positional parser, robust to COVID near-zero cells + both report layouts).
+- ✅ `scripts/backfill_arrivals.py` → real **63-month series 2021-01→2026-03**
+  (`published/series/arrivals_total/MV/v1.json`, committed as interim fixture) + manifest.
+- ⬜ Wire R2 publish (needs the Cloudflare account) — then the series moves off the fixture.
+- ⬜ The `nira-app` web slice (landing + nav + one Observable-Plot-SSR chart of the series).
+- ⬜ (later) Extend below 2021 once COVID-2020 months are verified.
+
 **Deliverables**
 - `ave_core` minimal but real:
   - `ingest/mma_viya.py` — pull MMA **series 104** (monthly total arrivals). Support
