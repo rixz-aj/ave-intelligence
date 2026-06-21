@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://avejourneys.com/intelligence/meta/series.schema.json",
+  "title": "Avé Intelligence time series artifact",
+  "type": "object",
+  "required": ["schemaVersion", "metric", "geo", "freq", "unit", "points", "lineage"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "metric": { "type": "string", "description": "e.g. arrivals_total" },
+    "geo": { "type": "string", "description": "ISO-ish region code, e.g. MV" },
+    "freq": { "enum": ["M", "Q", "A", "W", "D"] },
+    "unit": { "type": "string", "description": "e.g. arrivals, %, nights" },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ds", "y"],
+        "additionalProperties": false,
+        "properties": {
+          "ds": { "type": "string", "format": "date" },
+          "y": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "lineage": { "$ref": "#/$defs/lineage" }
+  },
+  "$defs": {
+    "lineage": {
+      "type": "object",
+      "required": ["runId", "gitSha", "inputHash"],
+      "properties": {
+        "runId": { "type": "string" },
+        "gitSha": { "type": "string" },
+        "inputHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

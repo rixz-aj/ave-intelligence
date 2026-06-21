@@ -1,0 +1,38 @@
+---
+schemaVersion: "1.0.0"
+slug: maldives-tourism-2026
+title: "Arrivals are on track to clear 2 million in 2026"
+kicker: "ARRIVALS & DEMAND"
+deck: "What 38 years of monthly data suggest about the year ahead."
+publishedAt: "2026-06-21"
+version: 1
+artifacts: ["arrivals-total-mv", "arrivals-forecast-sarima-12m"]
+sources: ["Avé Intelligence", "Ministry of Tourism (Maldives)", "MMA series 104"]
+sampleSize: "n=450 monthly observations, Jan 1988–present"
+pdfUrl: "https://media.avejourneys.com/intelligence/reports/maldives-tourism-2026-v1.pdf"
+---
+
+> **This is a template / Phase-0 fixture, not a published report.** It shows the
+> committed report shape the website renders. Replace with a real report in Phase 1.
+
+## Executive summary
+
+One or two paragraphs in the active voice. Lead with the takeaway, not the method.
+
+<Chart artifact="arrivals-forecast-sarima-12m" />
+
+The chart above is resolved by the website's `EditorialChart`: the `artifact` id is
+looked up in `manifest.json`, the forecast JSON is fetched from R2, and Observable
+Plot renders it to static SVG on the server. The chart's title is an active-voice
+takeaway and it carries a muted source line — see `docs/DESIGN-SYSTEM.md`.
+
+## Key findings
+
+— Finding one.
+— Finding two.
+
+## Methodology
+
+Seasonal-naive baseline vs. SARIMA on MMA series 104, with the 2020 structural break
+handled by an intervention dummy. Rolling-origin backtest; MASE reported on the
+artifact. *Source: Avé Intelligence · n=450 monthly observations.*

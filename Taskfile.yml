@@ -1,0 +1,53 @@
+# Avé Intelligence task runner (go-task: https://taskfile.dev).
+# Thin wrappers over uv so every session has one vocabulary. `task --list`.
+version: "3"
+
+tasks:
+  setup:
+    desc: Create the env, install deps, install pre-commit hooks.
+    cmds:
+      - uv sync --dev
+      - uv run pre-commit install
+
+  lint:
+    desc: Ruff lint + format check.
+    cmds:
+      - uv run ruff check .
+      - uv run ruff format --check .
+
+  fmt:
+    desc: Auto-format.
+    cmds:
+      - uv run ruff format .
+      - uv run ruff check --fix .
+
+  typecheck:
+    desc: mypy (strict) over ave_core.
+    cmds:
+      - uv run mypy
+
+  test:
+    desc: Run the test suite.
+    cmds:
+      - uv run pytest
+
+  # --- Data pipeline (DVC DAG: ingest -> features -> train -> backtest -> export -> publish) ---
+  ingest:
+    desc: "Pull raw sources into data/raw (Phase 0: MMA series 104 monthly arrivals)."
+    cmds:
+      - uv run python -m ave_core.ingest.mma_viya --series 104 --out data/raw
+
+  export:
+    desc: "Write web-consumable artifacts into published/ (series/forecast JSON + manifest)."
+    cmds:
+      - 'echo "Wired in Phase 0 — see projects/*/pipeline.py and ave_core.export"'
+
+  publish:
+    desc: "Push series/forecast JSON + PDFs to R2 (media.avejourneys.com/intelligence/**)."
+    cmds:
+      - 'echo "Wired in Phase 0 — write-then-flip: artifacts first, manifest last. See CONTRACT.md"'
+
+  validate:
+    desc: "Validate published/ against published/meta/*.schema.json (the public data contract)."
+    cmds:
+      - uv run python -m ave_core.export.validate published/

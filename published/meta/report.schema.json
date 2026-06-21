@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://avejourneys.com/intelligence/meta/report.schema.json",
+  "title": "Avé Intelligence report frontmatter",
+  "description": "Validates the YAML frontmatter of a published reports/*.mdx file.",
+  "type": "object",
+  "required": ["schemaVersion", "slug", "title", "kicker", "deck", "publishedAt", "version", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title": { "type": "string", "description": "Active-voice takeaway, not the metric name" },
+    "kicker": { "type": "string" },
+    "deck": { "type": "string" },
+    "publishedAt": { "type": "string", "format": "date" },
+    "version": { "type": "integer", "minimum": 1 },
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "description": "Artifact ids referenced by inline charts; resolved via the manifest"
+    },
+    "sources": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "sampleSize": { "type": "string", "description": "e.g. n=27 properties" },
+    "pdfUrl": { "type": "string", "format": "uri" }
+  }
+}

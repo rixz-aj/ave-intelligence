@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data lake — tracked by DVC, never committed to git (only *.dvc pointers are).
+# See data/README.md and CONTRACT.md.
+/data/raw/**
+/data/interim/**
+/data/processed/**
+/data/external/**
+!**/.gitkeep
+!**/*.dvc
+
+# Local build artifacts of published series/forecasts (the JSON/PDF go to R2,
+# NOT to git). MDX report bodies + manifest.json + meta/*.json ARE committed.
+/published/series/**
+/published/forecasts/**
+/published/reports/*.pdf
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store

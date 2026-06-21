@@ -1,0 +1,51 @@
+# Avé Intelligence — uv workspace root (virtual: no build-system, not installed).
+# The installable library is packages/core (ave-core); each projects/* is a
+# workspace member that depends on it. See CLAUDE.md for the workspace map.
+
+[project]
+name = "ave-intelligence"
+version = "0.0.0"
+description = "Avé Intelligence — Maldives tourism research, forecasting & analytics data platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["packages/*", "projects/*"]
+
+[tool.uv]
+dev-dependencies = [
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "pytest>=8",
+  "hypothesis>=6",
+  "pre-commit>=3.8",
+  "nbstripout>=0.7",
+  "jsonschema>=4.22",
+]
+
+# ave-core is sourced from the workspace everywhere it's depended on.
+[tool.uv.sources]
+ave-core = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["packages/core/src", "projects"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "PD"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["ave_core"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+files = ["packages/core/src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests", "packages/core", "projects"]

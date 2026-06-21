@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://avejourneys.com/intelligence/meta/forecast.schema.json",
+  "title": "Avé Intelligence forecast artifact",
+  "type": "object",
+  "required": ["schemaVersion", "model", "metric", "geo", "horizon", "points", "backtest", "lineage"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "model": { "enum": ["seasonal_naive", "sarima", "prophet", "xgboost"] },
+    "metric": { "type": "string" },
+    "geo": { "type": "string" },
+    "horizon": { "type": "string", "description": "e.g. 12m" },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ds", "yhat", "bands"],
+        "additionalProperties": false,
+        "properties": {
+          "ds": { "type": "string", "format": "date" },
+          "yhat": { "type": "number" },
+          "bands": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["level", "lower", "upper"],
+              "additionalProperties": false,
+              "properties": {
+                "level": { "type": "integer", "enum": [50, 80, 90, 95] },
+                "lower": { "type": "number" },
+                "upper": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "backtest": {
+      "type": "object",
+      "required": ["baseline", "mase"],
+      "properties": {
+        "baseline": { "type": "string" },
+        "mase": { "type": "number" },
+        "smape": { "type": "number" },
+        "pinball": { "type": "number" },
+        "folds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["runId", "gitSha", "inputHash"],
+      "properties": {
+        "runId": { "type": "string" },
+        "gitSha": { "type": "string" },
+        "inputHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    }
+  }
+}
