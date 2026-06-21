@@ -20,9 +20,7 @@ def test_lineage_stamp_shape() -> None:
 
 
 def test_build_and_write_series_is_immutable(tmp_path: Path) -> None:
-    df = pd.DataFrame(
-        {"ds": pd.to_datetime(["2026-01-01", "2026-02-01"]), "y": [100.0, 110.0]}
-    )
+    df = pd.DataFrame({"ds": pd.to_datetime(["2026-01-01", "2026-02-01"]), "y": [100.0, 110.0]})
     artifact = build_series(
         metric="arrivals_total", geo="MV", freq="M", unit="arrivals", df=df, lineage=stamp(b"x")
     )

@@ -32,9 +32,18 @@ def test_seasonal_naive_requires_full_cycle() -> None:
 
 
 def test_mase_zero_for_perfect_forecast() -> None:
-    train = _monthly_series([float(i % 12) for i in range(36)])
-    truth = _monthly_series([float(i % 12) for i in range(12)])
+    # Training series needs a non-zero seasonal-naive error (a trend gives scale=12),
+    # otherwise MASE's scale denominator is 0 and the metric is undefined (inf).
+    train = _monthly_series([float(i) for i in range(36)])
+    truth = _monthly_series([100.0, 110.0, 120.0])
     assert mase(truth, truth, train, m=12) == 0.0
+
+
+def test_mase_undefined_for_flat_seasonal_series() -> None:
+    # A perfectly periodic series has zero seasonal error → MASE scale is 0 → inf.
+    train = _monthly_series([float(i % 12) for i in range(36)])
+    truth = _monthly_series([0.0, 1.0, 2.0])
+    assert mase(truth, truth, train, m=12) == float("inf")
 
 
 def test_smape_zero_for_perfect_forecast() -> None:

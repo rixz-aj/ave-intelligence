@@ -50,7 +50,9 @@ def write_series(artifact: dict[str, Any], published_root: Path, version: int) -
 
     Versions are immutable — refuse to overwrite an existing version.
     """
-    out = published_root / "series" / artifact["metric"] / artifact["geo"] / f"v{version}.json"
+    out: Path = (
+        published_root / "series" / artifact["metric"] / artifact["geo"] / f"v{version}.json"
+    )
     if out.exists():
         raise FileExistsError(f"{out} already exists; bump the version (artifacts are immutable)")
     out.parent.mkdir(parents=True, exist_ok=True)

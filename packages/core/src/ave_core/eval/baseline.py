@@ -35,7 +35,9 @@ def mase(y_true: pd.Series, y_pred: pd.Series, y_train: pd.Series, m: int = 12) 
     scale = float(np.mean(np.abs(train[m:] - train[:-m])))
     if scale == 0.0:
         return float("inf")
-    error = float(np.mean(np.abs(np.asarray(y_true, dtype=float) - np.asarray(y_pred, dtype=float))))
+    error = float(
+        np.mean(np.abs(np.asarray(y_true, dtype=float) - np.asarray(y_pred, dtype=float)))
+    )
     return error / scale
 
 

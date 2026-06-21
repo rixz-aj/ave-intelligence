@@ -10,7 +10,7 @@ from __future__ import annotations
 import pandas as pd
 import pandera as pa
 
-arrivals_schema = pa.DataFrameSchema(
+arrivals_schema = pa.DataFrameSchema(  # type: ignore[no-untyped-call]
     columns={
         "ds": pa.Column("datetime64[ns]", unique=True, coerce=True, nullable=False),
         "y": pa.Column(float, checks=pa.Check.ge(0), nullable=True, coerce=True),
