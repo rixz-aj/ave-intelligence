@@ -4,8 +4,9 @@ Each monthly report (https://www.tourism.gov.mv/en/statistics/publications) carr
 `TOTAL TOURIST ARRIVALS` row in Table 1 with, in column order:
     [prior-year month, current-year month, change %, share %,
      prior-year YTD, current-year YTD, change %, share %]
-and a `<Month> <Year>` header. We extract the current-year monthly total → one tidy
-`(ds, y)` point per report; many reports compose the monthly arrivals series.
+and the period in either a standalone `<Month> <Year>` line (newer reports) or the
+Table-1 title range (older reports). We extract the current-year monthly total → one
+tidy `(ds, y)` point per report; many reports compose the monthly arrivals series.
 
 This is the working Phase-0 source: the MMA Viya API (series 104) is auth-gated
 (redirects to login), so the public PDFs are the reliable free path. See
@@ -19,10 +20,15 @@ import subprocess
 from pathlib import Path
 
 import pandas as pd
+import requests
 
-# Arrival counts in these reports are always >= 100,000 → always comma-grouped.
-# Matching only comma-grouped integers cleanly skips percentages like "9.0"/"100.0".
-_COUNT = re.compile(r"\d{1,3}(?:,\d{3})+")
+BASE_URL = "https://www.tourism.gov.mv"
+_DOC = re.compile(r"/dms/document/[a-f0-9]+\.pdf")
+# The TOTAL row is read by COLUMN POSITION (split on whitespace, strip the 3-word label),
+# not by pattern-matching numbers. This is robust to near-zero COVID values like "13" and
+# to "NA" cells — earlier comma-only matching dropped the non-comma prior-year-month cell
+# and shifted every column left.
+_LABEL = re.compile(r"\s*TOTAL\s+TOURIST\s+ARRIVALS\s*(.*)", re.IGNORECASE)
 _MONTHS = {
     name: num
     for num, name in enumerate(
@@ -44,6 +50,41 @@ _MONTHS = {
     )
 }
 _PERIOD = re.compile(r"^\s*([A-Za-z]+)\s+(\d{4})\s*$")
+_MONTH_YEAR = re.compile(r"\b([A-Za-z]+)\s+(\d{4})\b")
+
+
+def year_listing_url(year: int) -> str:
+    """URL of the Ministry of Tourism publications listing for a given year."""
+    return f"{BASE_URL}/en/statistics/publications/year-{year}"
+
+
+def discover_report_urls(listing_html: str, base_url: str = BASE_URL) -> list[str]:
+    """Extract absolute /dms/document/*.pdf URLs from a publications listing page.
+
+    Order-preserving and de-duplicated. The month each PDF covers is read from the PDF
+    itself (parse_report), so listing order doesn't need to be trusted.
+    """
+    seen: dict[str, None] = {}
+    for path in _DOC.findall(listing_html):
+        seen.setdefault(path, None)
+    return [base_url + path for path in seen]
+
+
+def fetch_text(url: str, *, timeout: int = 30) -> str:
+    """Download a page as text (used for the listing HTML)."""
+    response = requests.get(url, timeout=timeout)
+    response.raise_for_status()
+    return str(response.text)
+
+
+def download_pdf(url: str, dest: Path, *, timeout: int = 60) -> Path:
+    """Download a PDF to `dest` (skips if already present, for re-run friendliness)."""
+    if not dest.exists():
+        response = requests.get(url, timeout=timeout)
+        response.raise_for_status()
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(response.content)
+    return dest
 
 
 def extract_text(pdf_path: Path) -> str:
@@ -69,19 +110,29 @@ def parse_report(text: str) -> dict[str, object]:
     Raises ValueError if the period header or the TOTAL row can't be located.
     """
     period = _find_period(text)
-    total_line = _find_total_line(text)
-    counts = [int(tok.replace(",", "")) for tok in _COUNT.findall(total_line)]
-    if len(counts) < 2:
-        raise ValueError(f"could not parse counts from TOTAL row: {total_line!r}")
-    # Comma-grouped counts on the TOTAL row, in column order:
-    #   [0] prior-year month, [1] current-year month, [2] prior-year YTD, [3] current-year YTD.
-    # (Percentages/shares like 9.0 / 100.0 aren't comma-grouped, so they're excluded.)
+    match = _LABEL.match(_find_total_line(text))
+    if match is None:  # pragma: no cover - _find_total_line already guarantees the prefix
+        raise ValueError("could not isolate the TOTAL row columns")
+    # Column order: [0] prior-year month, [1] current-year month, [2] % change, [3] share,
+    #               [4] prior-year YTD, [5] current-year YTD, [6] % change, [7] share.
+    cols = match.group(1).split()
+    if len(cols) < 2:
+        raise ValueError(f"unexpected TOTAL row layout: {_find_total_line(text)!r}")
+    arrivals = _to_count(cols[1])
+    if arrivals is None:
+        raise ValueError(f"could not read current-month arrivals from: {cols!r}")
     return {
         "period": period,
-        "arrivals": counts[1],
-        "prior_year_month": counts[0],
-        "ytd": counts[3] if len(counts) >= 4 else None,
+        "arrivals": arrivals,
+        "prior_year_month": _to_count(cols[0]),
+        "ytd": _to_count(cols[5]) if len(cols) > 5 else None,
     }
+
+
+def _to_count(token: str) -> int | None:
+    """Parse a count cell ('176,175', '13') to int; return None for non-counts ('NA', '9.0')."""
+    cleaned = token.replace(",", "")
+    return int(cleaned) if cleaned.lstrip("-").isdigit() else None
 
 
 def monthly_series_from_reports(texts: list[str]) -> pd.DataFrame:
@@ -92,13 +143,26 @@ def monthly_series_from_reports(texts: list[str]) -> pd.DataFrame:
 
 
 def _find_period(text: str) -> pd.Timestamp:
+    # Strategy 1: a standalone "<Month> <Year>" line (newer reports, e.g. "August 2025").
     for line in text.splitlines():
         match = _PERIOD.match(line)
-        if match:
-            month = _MONTHS.get(match.group(1).lower())
-            if month:
-                return pd.Timestamp(year=int(match.group(2)), month=month, day=1)
-    raise ValueError("could not find a '<Month> <Year>' period header")
+        if match and match.group(1).lower() in _MONTHS:
+            return pd.Timestamp(
+                year=int(match.group(2)), month=_MONTHS[match.group(1).lower()], day=1
+            )
+    # Strategy 2: the Table-1 title range ("...January - February 2021"). Present in BOTH
+    # old and new layouts; the LAST month-year pair is the report's current month.
+    for line in text.splitlines():
+        if "ARRIVALS BY NATIONALITY" in line.upper():
+            pairs = [
+                (m.group(1).lower(), m.group(2))
+                for m in _MONTH_YEAR.finditer(line)
+                if m.group(1).lower() in _MONTHS
+            ]
+            if pairs:
+                month, year = pairs[-1]
+                return pd.Timestamp(year=int(year), month=_MONTHS[month], day=1)
+    raise ValueError("could not find a period (no '<Month> <Year>' line or Table-1 title)")
 
 
 def _find_total_line(text: str) -> str:

@@ -1,6 +1,19 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": null,
-  "gitSha": null,
-  "artifacts": []
+  "generatedAt": "2026-06-21T12:53:04.933771+00:00",
+  "gitSha": "73c145c",
+  "artifacts": [
+    {
+      "id": "arrivals-total-mv",
+      "type": "series",
+      "metric": "arrivals_total",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_total/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_total/MV/v1.json",
+      "hash": "sha256:5bf2f2754fb3b86f09b3645f1816b4699b785fc9ebd0d2996488890cf44a5990",
+      "createdAt": "2026-06-21T12:53:04.933771+00:00"
+    }
+  ]
 }
