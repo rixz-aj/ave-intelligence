@@ -8,9 +8,9 @@ one row per month, `ds` a unique month-start datetime, `y` a non-negative float
 from __future__ import annotations
 
 import pandas as pd
-import pandera as pa
+import pandera.pandas as pa
 
-arrivals_schema = pa.DataFrameSchema(  # type: ignore[no-untyped-call]
+arrivals_schema = pa.DataFrameSchema(
     columns={
         "ds": pa.Column("datetime64[ns]", unique=True, coerce=True, nullable=False),
         "y": pa.Column(float, checks=pa.Check.ge(0), nullable=True, coerce=True),

@@ -40,6 +40,10 @@ ignore = []
 [tool.ruff.lint.isort]
 known-first-party = ["ave_core"]
 
+[tool.ruff.lint.per-file-ignores]
+# Test fixtures reproduce real PDF table rows verbatim — keep the original spacing.
+"**/tests/**" = ["E501"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
