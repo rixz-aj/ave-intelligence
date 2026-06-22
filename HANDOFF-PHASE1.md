@@ -27,20 +27,22 @@ the web-facing items below.
 
 ---
 
-## ⚠️ DO THESE FIRST (before Phase 1 proper)
+## DO THESE FIRST (before Phase 1 proper)
 
-### 1. Fix the `/intelligence` prod-build SSR bug  ← highest priority
-The page renders an **empty body** in the production build (head/title/meta render; the
-component body has zero DOM). Other routes SSR full bodies, so it's specific to this route.
-- **Reproduce locally:** `cd ~/code/nira-app && npm run build && npx wrangler dev --env staging --port 8801 --local`, then `curl http://localhost:8801/intelligence` → body has no `<div>/<svg>`. No error in `wrangler tail` ("Ok" 200).
-- **Facts:** component + data ARE in `dist/server/assets/intelligence-*.js`. Works in dev. So it's a prod-bundle SSR throw that's swallowed after the head flushes.
-- **Debug path:** surface the real error — wrap/inspect `renderToReadableStream` `onError`, or temporarily add a try/catch logging in the component. Prime suspects: (a) a component import in the route's chunk resolving to `undefined` in the prod bundle → try importing brand primitives **directly** (`../../components/ave/layout`, `/labels`, etc.) instead of the `../../components/ave` barrel; (b) JSON-import interop (`import x from './*.json'`) — make it robust and **guard the `ARRIVALS_POINTS.reduce(...)` calls with an initial value** so module-load can't throw on an unexpected shape.
-- Verify the fix with the local `wrangler dev` repro, then redeploy staging.
+### 1. Wire R2 publish (data side)
+- R2 host is **`media.avejourneys.com`** (bucket `nira-media`), confirmed from the live worker binding `MEDIA_PUBLIC_URL`. The manifest URL is already correct.
+- Add a publish step (`wrangler r2 object put`, or rclone) under a `task publish` that uploads `published/series/**` + `forecasts/**` + report PDFs to `intelligence/**` on the `nira-media` bucket. **Write-then-flip** (artifacts before manifest). Needs the Cloudflare private-relay account ([[nyra-cloudflare-account]]).
+- Then nira-app can fetch from R2 instead of the committed fixture (`src/lib/intelligence-manifest.ts` per `docs/WEB-INTEGRATION.md`) — optional; the committed fixture already works.
 
-### 2. Wire R2 publish (data side)
-- The real R2 host is **`media.nyratest.uk`** (bucket `nira-media`), per `nira-app` CLAUDE.md — NOT `media.avejourneys.com`. Update `scripts/backfill_arrivals.py` `R2_BASE` and the manifest URL accordingly (or confirm the migration to media.avejourneys.com first).
-- Add a publish step (wrangler r2 object put, or rclone) under a `task publish` that uploads `published/series/**` + `forecasts/**` + report PDFs to `intelligence/**` on R2. **Write-then-flip** (artifacts before manifest).
-- Then nira-app can fetch from R2 instead of the committed fixture (`src/lib/intelligence-manifest.ts` per `docs/WEB-INTEGRATION.md`) — optional once SSR is fixed.
+### (Not a bug) The whole site is client-rendered
+While deploying I found `/intelligence` renders an empty SSR `<body>` — but so do prod `/`,
+`/journal`, `/concierge`, `/about`, `/charters`. The **entire live site** is client-rendered
+(SSR shell + `<head>` only); only `/resorts` SSRs a full body. The `<head>` (title, meta,
+canonical, og) DOES server-render for `/intelligence`, so the key SEO signals are fine and
+Googlebot renders the JS body. `/intelligence` matches the site. **Making the site body-SSR
+is a separate, site-wide TanStack-Start investigation** (why does only `/resorts` SSR? a
+loader alone doesn't flip it — tested) — NOT part of adding `/intelligence`. Pick it up only
+if you want full body-SSR site-wide for SEO.
 
 ---
 
