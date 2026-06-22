@@ -43,9 +43,9 @@ tasks:
       - 'echo "Wired in Phase 0 — see projects/*/pipeline.py and ave_core.export"'
 
   publish:
-    desc: "Push series/forecast JSON + PDFs to R2 (media.avejourneys.com/intelligence/**)."
+    desc: "Push series/forecast JSON + report PDFs to R2 (media.avejourneys.com/intelligence/**)."
     cmds:
-      - 'echo "Wired in Phase 0 — write-then-flip: artifacts first, manifest last. See CONTRACT.md"'
+      - bash scripts/publish_r2.sh published
 
   validate:
     desc: "Validate published/ against published/meta/*.schema.json (the public data contract)."

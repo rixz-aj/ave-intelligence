@@ -24,8 +24,12 @@ chart on the live site. This phase *defines the contract* everything else confor
   PDFs (column-positional parser, robust to COVID near-zero cells + both report layouts).
 - ✅ `scripts/backfill_arrivals.py` → real **63-month series 2021-01→2026-03**
   (`published/series/arrivals_total/MV/v1.json`, committed as interim fixture) + manifest.
-- ⬜ Wire R2 publish (needs the Cloudflare account) — then the series moves off the fixture.
-- ⬜ The `nira-app` web slice (landing + nav + one Observable-Plot-SSR chart of the series).
+- ✅ R2 publish wired (`task publish` → `scripts/publish_r2.sh`); series LIVE at
+  `media.avejourneys.com/intelligence/series/arrivals_total/MV/v1.json` (HTTP 200).
+- ✅ `nira-app` web slice MERGED (PR #1) + deployed to **staging.avejourneys.com**:
+  `/intelligence` landing + nav + hand-rolled SSR-safe SVG arrivals chart. (Note: the
+  whole site is client-rendered except `/resorts`; the `<head>`/SEO does SSR.)
+- ⬜ Point the site at R2 instead of the committed fixture (optional; fixture works).
 - ⬜ (later) Extend below 2021 once COVID-2020 months are verified.
 
 **Deliverables**
