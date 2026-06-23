@@ -1,36 +1,38 @@
 ---
 schemaVersion: "1.0.0"
 slug: maldives-tourism-2026
-title: "The post-pandemic boom is plateauing near 2.2 million"
+title: "The spring 2026 slump was an air-bridge shock, not fading demand"
 kicker: "ARRIVALS & DEMAND"
-deck: "After a record 2.25 million in 2025, a SARIMA model on 17 years of monthly data puts the next 12 months essentially flat — with a soft, Ramadan-shifted start to 2026."
+deck: "A late-February conflict severed the Maldives' Gulf transit hubs, cutting March–April arrivals 20–25%. With connectivity recovering, the underlying growth path resumes — if it holds."
 publishedAt: "2026-06-23"
-version: 1
+version: 2
 artifacts: ["arrivals-total-mv", "arrivals-forecast-12m", "arrivals-total-mv-annual"]
-sources: ["Avé Intelligence", "Ministry of Tourism (Maldives)", "MMA series 104"]
-sampleSize: "n=207 monthly observations, Jan 2009–Mar 2026 (annual context to 1988)"
+sources: ["Avé Intelligence", "Ministry of Tourism (Maldives)", "MMA series 104", "Trade & regional press (Mar–Apr 2026)"]
+sampleSize: "n=208 monthly observations, Jan 2009–Apr 2026"
 ---
 
 ## Executive summary
 
-The Maldives just closed its strongest year on record — **2.25 million arrivals in 2025**, up 9.8% on 2024. Our model thinks that is roughly where things settle. The central forecast puts the **next twelve months (Apr 2026 – Mar 2027) at about 2.24 million arrivals — essentially flat on 2025**, and calendar 2026 on track for ~2.22 million. After four years of post-pandemic catch-up growth, the curve is flattening, not breaking higher.
+The Maldives opened 2026 at record strength — **February drew 247,722 arrivals, the best single month on record (+15.7% year-on-year)** — and then fell off a cliff: **March −20.7%, April roughly −25%.** The cause was not fading demand and not, as is sometimes claimed, the timing of Ramadan. It was a **connectivity shock.** A Middle East conflict that erupted on 28 February 2026 closed Gulf airspace and disrupted the Dubai, Doha and Abu Dhabi transit hubs through which **about 30–35% of all Maldives arrivals — and more than half of European arrivals — connect.** Roughly 500 flights into Malé were cancelled between late February and late March. The record January–February travel had already been booked and flown before the strikes; March and April absorbed the full hit.
 
 <Chart artifact="arrivals-forecast-12m" />
 
-The near-term swing factor is a soft start to 2026. March 2026 came in at **161,259 — down 21% year-on-year**, a drop confirmed independently by both Ministry of Tourism and MMA figures and consistent with the timing of Ramadan moving into February–March this year. The model carries that softness forward into a still-seasonal, but no-longer-accelerating, year.
+Because the shock was about *access*, not *appetite*, the recovery looks like a connectivity story too: private-jet arrivals jumped sharply even as commercial traffic fell, and arrivals began rebounding in May after the early-April ceasefire. We therefore treat March–April 2026 as a transient intervention — the same way we treat the 2020 COVID collapse — and forecast the underlying path the country was on. That path is a continuation of the **~10%-a-year growth** of 2024 and 2025: the central forecast puts the next twelve months near **2.5 million arrivals, assuming Gulf connectivity normalises.**
 
-## Key findings
+## What happened — the air bridge, not the appetite
 
-— **2025 was the peak of the recovery, not a new takeoff.** Annual arrivals climbed 155,757 (1988) → 2.25 million (2025); the last leg, 2024→2025, added 9.8%. The forecast adds essentially nothing on top over the next year.
+The timing is the tell. A demand slowdown does not switch on between a record February and a collapsed March; an air bridge does. Industry bodies (MATATO, NHGAM) put losses since March above **USD 500 million**; the Ministry of Tourism extended visas for stranded visitors and moved to court non-Gulf carriers. None of this is consistent with tourists losing interest in the Maldives — it is consistent with them being unable to get there.
 
-— **Seasonality is intact and sharp.** Expect the usual winter peak — the model puts February 2027 near 240,000 (80% interval ≈ 210,000–274,000) — and the May–June low near 136,000 (80% ≈ 122,000–151,000).
+Two things this was **not**. It was **not Ramadan**: Ramadan fell *more* fully in March 2025, which was a perfectly healthy month (+4.8% year-on-year), so 2026's earlier timing cannot explain a March-2026 decline — if anything it was a mild tailwind. And it was **not a demand recession**: India, a top growth market, kept rising, and the affluent segment kept coming by private jet where it could bypass the hubs.
 
-— **The calendar quarter to watch is Q1.** With Ramadan now falling in late February through March, the high-season shoulder is shifting; a repeat of March 2026's weakness would pull the year below 2025.
+## The outlook — recovery, with a real near-term caveat
+
+Our central forecast restores the pre-shock trajectory. But honesty requires flagging the one piece of post-ceasefire evidence we have: **May 2026 rebounded only about +2.6% year-on-year** — real recovery, but well below the model's central path, and close to the *lower* edge of its 80% prediction band. Read the band, not just the line: the gap between the central forecast and the May out-turn is exactly the risk that connectivity, and confidence, return gradually rather than overnight. If Gulf routing stays impaired, arrivals will track the lower band; if it fully normalises, the central path is reasonable.
 
 ## Methodology
 
-The forecast is a seasonal ARIMA — SARIMA(1,1,1)(0,1,1)₁₂ fitted in log space, with the 2020 COVID collapse (arrivals were literally zero April–June 2020) absorbed by explicit intervention dummies rather than fitted across or deleted. We score it against a seasonal-naive baseline on a 30-origin rolling-origin backtest, refitting at every origin.
+The forecast is a seasonal ARIMA — SARIMA(1,1,1)(0,1,1)₁₂ fitted in log space — with two external shocks handled by **explicit intervention dummies** rather than fitted through or deleted: the 2020 COVID border closure (arrivals were literally zero April–June 2020) and the **2026 Gulf air-bridge disruption (March–April 2026)**. Absorbing those months lets the trend and seasonality be estimated from undistorted data, and the 12-month forecast carries no shock term. We score against a seasonal-naive baseline on a 30-origin rolling-origin backtest (refit at every origin): SARIMA earns a **MASE of 0.76 against the baseline's 0.95** (below 1.0 = better than naive) and a **sMAPE of 6.7%**. We also tested Prophet and an XGBoost quantile model; neither beat the naive baseline on this history, so the published forecast is the SARIMA.
 
-SARIMA earns a **MASE of 0.59 against the baseline's 0.83** (a ~29% improvement; MASE below 1.0 means better than the naive benchmark) and a **sMAPE of 5.6%**. We also tested Prophet and an XGBoost quantile model; on this 17-year monthly history **neither beat the naive baseline** (MASE 2.06 and 1.57 respectively — tree models cannot extrapolate the trend, and Prophet's intervals are poorly calibrated here), so the published forecast is the SARIMA. Every number above is reproducible from the published series and the embedded backtest block.
+Two caveats sit on top of the statistics. First, the **causal attribution is an inference**: it rests on the exact timing, the flight-cancellation record, and ministerial statements reported in trade and regional press alongside the official arrival data — not on a formal Ministry of Tourism causal statement. Second, the **latest months are provisional**: the Mar–Apr 2026 figures carry no preliminary flag but latest-month Maldives figures are routinely revised, so the magnitudes are reliable in direction and order more than to the last digit.
 
-*Source: Avé Intelligence · Ministry of Tourism (Maldives) monthly reports · MMA series 104 · n=207 monthly observations, Jan 2009–Mar 2026.*
+*Source: Avé Intelligence · Ministry of Tourism (Maldives) monthly reports · MMA series 104 · spring-2026 connectivity reporting in Maldives Independent, Travel And Tour World, TTG Asia, Hotelier Maldives and Edition.mv · n=208 monthly observations, Jan 2009–Apr 2026.*

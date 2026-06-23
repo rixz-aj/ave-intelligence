@@ -58,7 +58,7 @@ class XGBForecaster:
         self.y = y
         self._t = np.log1p(y.to_numpy(dtype=float))
         self._index = pd.DatetimeIndex(y.index)
-        self._covid = features.covid_flag(self._index).to_numpy(dtype=float)
+        self._covid = features.intervention_flag(self._index).to_numpy(dtype=float)
         return self
 
     def _train_for_horizon(self, h: int, quantiles: Sequence[float]) -> dict[float, XGBRegressor]:

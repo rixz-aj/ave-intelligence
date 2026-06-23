@@ -28,15 +28,40 @@ from ave_core.export import (
     write_manifest,
     write_series,
 )
-from ave_core.ingest import mot_pdf
+from ave_core.ingest import mma_viya, mot_pdf
 from ave_core.lineage import stamp
 
 ARTIFACT_ID = "arrivals-total-mv"
 R2_BASE = "https://media.avejourneys.com/intelligence"
 
 
+def _append_mma_tail(points: pd.DataFrame, sources: list[str]) -> pd.DataFrame:
+    """Extend the PDF-derived series with the MMA Viya monthly window for any months the
+    MoT PDFs don't cover (the latest report sometimes ships a transposed layout the column
+    parser can't read). MMA and MoT agree to <0.02% where they overlap, so the tail is a
+    safe, source-noted gap-fill that keeps the series current."""
+    try:
+        mma_monthly = mma_viya.fetch_series(104, freq="M")
+    except Exception as exc:  # noqa: BLE001 - network resilience; PDF series still stands
+        print(f"  MMA tail skipped ({exc})")
+        return points
+    cutoff = points["ds"].max()
+    tail = mma_monthly[mma_monthly["ds"] > cutoff]
+    if tail.empty:
+        return points
+    print(f"  + {len(tail)} month(s) from MMA Viya tail: "
+          f"{', '.join(f'{d:%Y-%m}' for d in tail['ds'])}")
+    sources.append("mma_viya:series_104:monthly")
+    return pd.concat([points, tail], ignore_index=True)
+
+
 def backfill(
-    from_year: int, to_year: int, published_root: Path, raw_dir: Path, version: int = 1
+    from_year: int,
+    to_year: int,
+    published_root: Path,
+    raw_dir: Path,
+    version: int = 1,
+    mma_tail: bool = True,
 ) -> pd.DataFrame:
     records: list[dict[str, object]] = []
     sources: list[str] = []
@@ -67,6 +92,8 @@ def backfill(
     points = pd.DataFrame(
         {"ds": pd.to_datetime(frame["period"]), "y": frame["arrivals"].astype(float)}
     )
+    if mma_tail:
+        points = _append_mma_tail(points, sources)
     # The MoT archive re-uploads some months in more than one PDF. Identical re-uploads are
     # harmless (drop them); genuinely conflicting values for the same month are a parser bug
     # and must fail loudly rather than be silently coin-flipped.
@@ -128,10 +155,18 @@ def main(argv: list[str] | None = None) -> int:
         default=1,
         help="series version to write (v1=dev fixture; bump for immutable publishes)",
     )
+    parser.add_argument(
+        "--no-mma-tail",
+        dest="mma_tail",
+        action="store_false",
+        help="don't extend the series with the MMA Viya monthly tail (default: do)",
+    )
     args = parser.parse_args(argv)
 
     print(f"Backfilling arrivals {args.from_year}–{args.to_year} → v{args.version}…")
-    series = backfill(args.from_year, args.to_year, args.published, args.raw, args.version)
+    series = backfill(
+        args.from_year, args.to_year, args.published, args.raw, args.version, args.mma_tail
+    )
     print(
         f"\n✓ {len(series)} monthly points "
         f"({series['ds'].min():%Y-%m} → {series['ds'].max():%Y-%m})"

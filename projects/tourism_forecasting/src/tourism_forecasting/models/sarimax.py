@@ -34,7 +34,7 @@ class SarimaxForecaster:
     def fit(self, y: pd.Series) -> SarimaxForecaster:
         self.y = y
         endog = np.log1p(y.astype(float))
-        exog = features.covid_dummies(y.index)
+        exog = features.intervention_dummies(y.index)
         exog = exog.loc[:, (exog != 0.0).any(axis=0)]  # drop columns with no support in train
         self._exog_cols = list(exog.columns)
         exog_arg = exog if self._exog_cols else None
@@ -53,7 +53,7 @@ class SarimaxForecaster:
     def forecast(self, horizon: int, levels: Sequence[int]) -> pd.DataFrame:
         idx = features.future_index(self.y, horizon)
         if self._exog_cols:
-            future_exog = features.covid_dummies(idx).reindex(
+            future_exog = features.intervention_dummies(idx).reindex(
                 columns=self._exog_cols, fill_value=0.0
             )
         else:

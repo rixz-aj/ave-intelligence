@@ -29,7 +29,7 @@ class ProphetForecaster:
             {
                 "ds": y.index,
                 "y": np.log1p(y.to_numpy(dtype=float)),
-                "covid": features.covid_flag(y.index).to_numpy(dtype=float),
+                "shock": features.intervention_flag(y.index).to_numpy(dtype=float),
             }
         )
         model = Prophet(
@@ -39,13 +39,13 @@ class ProphetForecaster:
             seasonality_mode="additive",
             uncertainty_samples=1000,
         )
-        model.add_regressor("covid")
+        model.add_regressor("shock")
         self._model = model.fit(frame)
         return self
 
     def forecast(self, horizon: int, levels: Sequence[int]) -> pd.DataFrame:
         idx = features.future_index(self.y, horizon)
-        future = pd.DataFrame({"ds": idx, "covid": 0.0})
+        future = pd.DataFrame({"ds": idx, "shock": 0.0})
         samples = self._model.predictive_samples(future)["yhat"]  # (horizon, n_samples), log space
         out = pd.DataFrame({"yhat": np.clip(np.expm1(samples.mean(axis=1)), 0.0, None)}, index=idx)
         for level in levels:

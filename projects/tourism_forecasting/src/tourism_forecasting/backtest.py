@@ -28,7 +28,7 @@ class BacktestResult:
     smape: float
     pinball: float
     folds: int
-    mase_ex_covid: float
+    mase_ex_shocks: float
     n_points: int
 
     def as_artifact_block(self, baseline: str = "seasonal_naive") -> dict[str, object]:
@@ -93,8 +93,10 @@ def rolling_origin_backtest(
     actual_s = pd.Series(all_actual)
     pred_s = pd.Series(all_pred)
     ds_idx = pd.DatetimeIndex(all_ds)
-    in_covid = (ds_idx >= config.COVID_WINDOW[0]) & (ds_idx <= config.COVID_WINDOW[1])
-    ex = ~in_covid
+    in_shock = np.zeros(len(ds_idx), dtype=bool)
+    for start, end in config.INTERVENTION_WINDOWS:
+        in_shock |= (ds_idx >= start) & (ds_idx <= end)
+    ex = ~in_shock
     mase_ex = (
         float(np.mean(np.abs(actual_s[ex].to_numpy() - pred_s[ex].to_numpy())) / _seasonal_scale(y))
         if ex.any()
@@ -106,7 +108,7 @@ def rolling_origin_backtest(
         smape=smape(actual_s, pred_s),
         pinball=float(np.mean(pinball_terms)) if pinball_terms else float("nan"),
         folds=len(per_origin_mase),
-        mase_ex_covid=mase_ex,
+        mase_ex_shocks=mase_ex,
         n_points=len(all_actual),
     )
 

@@ -38,11 +38,11 @@ def test_future_index_is_contiguous_month_starts() -> None:
     assert (idx.day == 1).all()
 
 
-def test_covid_dummies_fixed_columns_and_zero_in_future() -> None:
-    cols_a = features.covid_dummies(
+def test_intervention_dummies_fixed_columns_and_zero_in_future() -> None:
+    cols_a = features.intervention_dummies(
         pd.DatetimeIndex(pd.date_range("2019-01-01", periods=12, freq="MS"))
     )
-    cols_b = features.covid_dummies(
+    cols_b = features.intervention_dummies(
         pd.DatetimeIndex(pd.date_range("2027-01-01", periods=12, freq="MS"))
     )
     # Same column set regardless of index (so train/future align)...
@@ -50,7 +50,7 @@ def test_covid_dummies_fixed_columns_and_zero_in_future() -> None:
     # ...and 2027 is entirely outside the COVID window -> all zero.
     assert (cols_b.to_numpy() == 0.0).all()
     # The window months light up exactly once.
-    assert cols_a["covid_2020_04"].sum() == 0.0  # 2019 frame doesn't cover Apr 2020
+    assert cols_a["shock_2020_04"].sum() == 0.0  # 2019 frame doesn't cover Apr 2020
 
 
 def test_seasonal_naive_repeats_last_cycle_with_nested_bands() -> None:

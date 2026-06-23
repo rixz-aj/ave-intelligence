@@ -72,11 +72,11 @@ def run(published_root: Path = Path("published")) -> PipelineOutput:
 
 
 def _format_scoreboard(out: PipelineOutput) -> str:
-    lines = ["", "model           MASE    MASE(ex-COVID)  sMAPE   pinball  folds", "-" * 58]
+    lines = ["", "model           MASE    MASE(ex-shock)  sMAPE   pinball  folds", "-" * 58]
     for name, r in sorted(out.scoreboard.items(), key=lambda kv: kv[1].mase):
         star = "  <- winner" if name == out.winner else ""
         lines.append(
-            f"{name:14s} {r.mase:6.3f}   {r.mase_ex_covid:7.3f}      "
+            f"{name:14s} {r.mase:6.3f}   {r.mase_ex_shocks:7.3f}      "
             f"{r.smape:6.2f}  {r.pinball:7.0f}  {r.folds:3d}{star}"
         )
     return "\n".join(lines)

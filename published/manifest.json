@@ -1,20 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-06-23T16:26:15.680004+00:00",
-  "gitSha": "b0e45d1",
+  "generatedAt": "2026-06-23T17:35:09.950471+00:00",
+  "gitSha": "6f8c7c5",
   "artifacts": [
-    {
-      "id": "arrivals-total-mv",
-      "type": "series",
-      "metric": "arrivals_total",
-      "geo": "MV",
-      "version": 2,
-      "latest": true,
-      "path": "series/arrivals_total/MV/v2.json",
-      "url": "https://media.avejourneys.com/intelligence/series/arrivals_total/MV/v2.json",
-      "hash": "sha256:3b5c942be74d42ebd3829e3aac385a788f2fd5ab59b0013e7e92b1c005970450",
-      "createdAt": "2026-06-23T15:49:37.683380+00:00"
-    },
     {
       "id": "arrivals-total-mv-annual",
       "type": "series",
@@ -28,28 +16,40 @@
       "createdAt": "2026-06-23T15:49:40.390687+00:00"
     },
     {
+      "id": "arrivals-total-mv",
+      "type": "series",
+      "metric": "arrivals_total",
+      "geo": "MV",
+      "version": 3,
+      "latest": true,
+      "path": "series/arrivals_total/MV/v3.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_total/MV/v3.json",
+      "hash": "sha256:96b1b42b92ab02e4bb27324ff7596748502f1e88171befdf504f30fa92ba18b0",
+      "createdAt": "2026-06-23T17:17:44.777924+00:00"
+    },
+    {
       "id": "arrivals-forecast-12m",
       "type": "forecast",
       "model": "sarima",
       "metric": "arrivals_total",
       "geo": "MV",
       "horizon": "12m",
-      "version": 1,
+      "version": 2,
       "latest": true,
-      "path": "forecasts/sarima/12m/v1.json",
-      "url": "https://media.avejourneys.com/intelligence/forecasts/sarima/12m/v1.json",
-      "hash": "sha256:3ca673bd5be95d5c6eae0a685e50bcf3f99cb594f8f173334e2b5fe8baec444d",
-      "createdAt": "2026-06-23T16:22:00.676555+00:00"
+      "path": "forecasts/sarima/12m/v2.json",
+      "url": "https://media.avejourneys.com/intelligence/forecasts/sarima/12m/v2.json",
+      "hash": "sha256:26b0f7ea028fe4cf0892e293878e33c7e8915155a2a30ba5da756efb83715a6d",
+      "createdAt": "2026-06-23T17:34:22.690326+00:00"
     },
     {
       "id": "maldives-tourism-2026",
       "type": "report",
       "slug": "maldives-tourism-2026",
-      "version": 1,
+      "version": 2,
       "latest": true,
       "path": "reports/maldives-tourism-2026.mdx",
-      "hash": "sha256:0a9690e342770001d69398a7a6d02149c6c6c3d8b2dd054763dd87e259ed3974",
-      "createdAt": "2026-06-23T16:26:15.680004+00:00"
+      "hash": "sha256:e00e771e833306c2713efac40a7c30854d4ac7d5ec41c22dd2ba46201901e82f",
+      "createdAt": "2026-06-23T17:35:09.950471+00:00"
     }
   ]
 }
