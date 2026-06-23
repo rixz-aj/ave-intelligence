@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-06-23T17:35:09.950471+00:00",
-  "gitSha": "6f8c7c5",
+  "generatedAt": "2026-06-23T18:05:58.319796+00:00",
+  "gitSha": "d73b74c",
   "artifacts": [
     {
       "id": "arrivals-total-mv-annual",
@@ -50,6 +50,64 @@
       "path": "reports/maldives-tourism-2026.mdx",
       "hash": "sha256:e00e771e833306c2713efac40a7c30854d4ac7d5ec41c22dd2ba46201901e82f",
       "createdAt": "2026-06-23T17:35:09.950471+00:00"
+    },
+    {
+      "id": "bednights-resorts-mv",
+      "type": "series",
+      "metric": "bednights_resorts",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/bednights_resorts/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/bednights_resorts/MV/v1.json",
+      "hash": "sha256:04567a97be06286cda365a4b816ad79f2e9c164a78dacd81c0cf6035b29a6d28",
+      "createdAt": "2026-06-23T18:02:39.240483+00:00"
+    },
+    {
+      "id": "bednights-hotels-mv",
+      "type": "series",
+      "metric": "bednights_hotels",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/bednights_hotels/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/bednights_hotels/MV/v1.json",
+      "hash": "sha256:364a0a1ee26304c3175d64a35144f856b68717ea1ade7967baf43cc47a42c2be",
+      "createdAt": "2026-06-23T18:02:39.240483+00:00"
+    },
+    {
+      "id": "bednights-guesthouses-mv",
+      "type": "series",
+      "metric": "bednights_guesthouses",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/bednights_guesthouses/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/bednights_guesthouses/MV/v1.json",
+      "hash": "sha256:06e70dc4f12f4f5b77f6466860563ae08dab0130469bccefca23b89c766f8630",
+      "createdAt": "2026-06-23T18:02:39.240483+00:00"
+    },
+    {
+      "id": "bednights-safari-mv",
+      "type": "series",
+      "metric": "bednights_safari",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/bednights_safari/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/bednights_safari/MV/v1.json",
+      "hash": "sha256:eaf394928f61f0397625866e9736a2d5ea925c47b714efb0632a6fe8206d6448",
+      "createdAt": "2026-06-23T18:02:39.240483+00:00"
+    },
+    {
+      "id": "maldives-accommodation-mix-shift",
+      "type": "report",
+      "slug": "maldives-accommodation-mix-shift",
+      "version": 1,
+      "latest": true,
+      "path": "reports/maldives-accommodation-mix-shift.mdx",
+      "hash": "sha256:ee18c816ea4875c5c8b589ab2a31acd18dcc958c671df776aa0a85ec308a95be",
+      "createdAt": "2026-06-23T18:05:58.319796+00:00"
     }
   ]
 }
