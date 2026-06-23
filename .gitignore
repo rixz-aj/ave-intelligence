@@ -34,3 +34,6 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Local wrangler cache
+.wrangler/

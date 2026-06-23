@@ -35,7 +35,9 @@ ARTIFACT_ID = "arrivals-total-mv"
 R2_BASE = "https://media.avejourneys.com/intelligence"
 
 
-def backfill(from_year: int, to_year: int, published_root: Path, raw_dir: Path) -> pd.DataFrame:
+def backfill(
+    from_year: int, to_year: int, published_root: Path, raw_dir: Path, version: int = 1
+) -> pd.DataFrame:
     records: list[dict[str, object]] = []
     sources: list[str] = []
 
@@ -62,9 +64,20 @@ def backfill(from_year: int, to_year: int, published_root: Path, raw_dir: Path) 
         raise SystemExit("no reports parsed — nothing to write")
 
     frame = pd.DataFrame(records)
-    series_df = validate_arrivals(
-        pd.DataFrame({"ds": pd.to_datetime(frame["period"]), "y": frame["arrivals"].astype(float)})
+    points = pd.DataFrame(
+        {"ds": pd.to_datetime(frame["period"]), "y": frame["arrivals"].astype(float)}
     )
+    # The MoT archive re-uploads some months in more than one PDF. Identical re-uploads are
+    # harmless (drop them); genuinely conflicting values for the same month are a parser bug
+    # and must fail loudly rather than be silently coin-flipped.
+    conflicting = points.groupby("ds")["y"].nunique()
+    conflicts = conflicting[conflicting > 1].index
+    if len(conflicts):
+        raise SystemExit(
+            "conflicting duplicate months (same month, different values): "
+            + ", ".join(f"{c:%Y-%m}" for c in conflicts)
+        )
+    series_df = validate_arrivals(points.drop_duplicates("ds"))
 
     lineage = stamp("|".join(sorted(sources)).encode())
     artifact = build_series(
@@ -76,10 +89,10 @@ def backfill(from_year: int, to_year: int, published_root: Path, raw_dir: Path) 
         lineage=lineage,
     )
 
-    target = published_root / "series" / "arrivals_total" / "MV" / "v1.json"
-    if target.exists():
-        target.unlink()  # dev backfill regenerates v1; production versions are immutable
-    path = write_series(artifact, published_root, version=1)
+    target = published_root / "series" / "arrivals_total" / "MV" / f"v{version}.json"
+    if version == 1 and target.exists():
+        target.unlink()  # v1 is the interim dev fixture; regenerate it. v2+ stay immutable.
+    path = write_series(artifact, published_root, version=version)
 
     now = dt.datetime.now(dt.UTC).isoformat()
     rel = path.relative_to(published_root).as_posix()
@@ -91,7 +104,7 @@ def backfill(from_year: int, to_year: int, published_root: Path, raw_dir: Path) 
             "type": "series",
             "metric": "arrivals_total",
             "geo": "MV",
-            "version": 1,
+            "version": version,
             "latest": True,
             "path": rel,
             "url": f"{R2_BASE}/{rel}",
@@ -109,10 +122,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--to-year", type=int, default=dt.date.today().year)
     parser.add_argument("--published", type=Path, default=Path("published"))
     parser.add_argument("--raw", type=Path, default=Path("data/raw/mot"))
+    parser.add_argument(
+        "--version",
+        type=int,
+        default=1,
+        help="series version to write (v1=dev fixture; bump for immutable publishes)",
+    )
     args = parser.parse_args(argv)
 
-    print(f"Backfilling arrivals {args.from_year}–{args.to_year}…")
-    series = backfill(args.from_year, args.to_year, args.published, args.raw)
+    print(f"Backfilling arrivals {args.from_year}–{args.to_year} → v{args.version}…")
+    series = backfill(args.from_year, args.to_year, args.published, args.raw, args.version)
     print(
         f"\n✓ {len(series)} monthly points "
         f"({series['ds'].min():%Y-%m} → {series['ds'].max():%Y-%m})"

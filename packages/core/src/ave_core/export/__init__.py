@@ -7,12 +7,15 @@ See CONTRACT.md.
 
 from __future__ import annotations
 
+from ave_core.export.forecast import build_forecast, write_forecast
 from ave_core.export.manifest import file_hash, load_manifest, upsert_artifact, write_manifest
 from ave_core.export.series import build_series, write_series
 
 __all__ = [
     "build_series",
     "write_series",
+    "build_forecast",
+    "write_forecast",
     "load_manifest",
     "upsert_artifact",
     "write_manifest",

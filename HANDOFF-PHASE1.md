@@ -68,16 +68,45 @@ verify Apr–Jul 2020), or (b) pursue an MMA Viya API token for the 1988→ mont
 
 ---
 
-## 🟢 YOUR IDEAS (fill this in before/at the start of the session)
+## 🟢 YOUR IDEAS — the structural-demand-model vision (decided 2026-06-23)
 
-> Drop your Phase 1 ideas here so the next session builds them in. Examples of the kind of
-> thing that fits: extra metrics to forecast (by-market arrivals, occupancy, bednights),
-> scenario/what-if controls, a specific report angle, a different model, UI for the Forecast
-> Center, alerts, etc.
+The owner's idea: go beyond univariate time-series to a **structural source-country demand
+model** — source-country economics + propensity-to-consume/save + demographics + outbound
+travel + competitor-destination substitution (Bali/Seychelles/Mauritius/Fiji/Caribbean) +
+the resort-vs-island accessibility mix-shift → predict inbound by demographic.
 
-- …
-- …
-- …
+A research+verify workflow (8 domains, adversarially checked) returned the verdict and it is
+captured here as the Phase-1+ direction:
+
+- **Feasible — but at ANNUAL frequency, as a separate analytical module, NOT the monthly
+  forecaster.** Monthly macro doesn't exist free; disaggregating annual → monthly would
+  fabricate the very variation the model claims to measure (violates the honesty contract).
+- **Two genuine walls (be blunt with the owner):** (1) the nationality × accommodation-type
+  cross-tab does **not** exist free anywhere — so "which nationalities drive the budget
+  segment" is a narrative, not a measurement; (2) MPC and hotel ADR are estimated/assumed
+  or paywalled, so a true AIDS price-elasticity system isn't buildable — only reduced-form.
+- **Agreed scope = three honest pieces:** (a) monthly univariate forecaster [THIS PHASE];
+  (b) compositional resort/guesthouse **mix-shift** module (the honest, measurable version
+  of the island-accessibility hypothesis); (c) deferred **annual** structural/elasticity
+  module (gravity / ARDL-ECM + competitor-substitution panel) for reports.
+- **TIER-A free inputs to build next:** source-market CPI+FX (IMF IFS/DBnomics), holiday/
+  Ramadan/CNY calendars (huge ROI — see the real March-2026 −21% Ramadan dip), competitor
+  arrivals-by-nationality panel (Jamaica/SriLanka/Seychelles/Fiji/Thailand/Indonesia/DR),
+  flight-route events to MLE. Full design brief in the session transcript / memory
+  [[ave-intel-mma-data-path]].
+
+## ✅ DONE this session (2026-06-23)
+
+- **Long series:** `mma_viya` connector (tokenless annual 1988→2025, 38 pts) + monthly
+  extended 2009→2026 (207 pts, MoT PDFs) published as immutable **v2**. Two real `mot_pdf`
+  parser bugs fixed (prior-year-title vs release-month dateline; comma-in-title); 14/17
+  complete years reconcile **exactly** to the MMA annual control totals.
+- **Forecaster:** seasonal-naive + SARIMA + Prophet + XGBoost, COVID intervention dummies,
+  rolling-origin backtest. **SARIMA wins: MASE 0.59 vs naive 0.83, sMAPE 5.6%** (Prophet &
+  XGBoost did NOT beat naive on this 17-yr history — reported honestly). Forecast +
+  `maldives-tourism-2026.mdx` published; takeaway = post-COVID boom plateauing near 2.2M.
+- **Backlog:** Ramadan/holiday regressor (would fix the March-2026 swing); XGBoost needs
+  detrending (can't extrapolate trend); push artifacts to R2 + nira-app sync.
 
 ---
 

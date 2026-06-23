@@ -1,0 +1,36 @@
+---
+schemaVersion: "1.0.0"
+slug: maldives-tourism-2026
+title: "The post-pandemic boom is plateauing near 2.2 million"
+kicker: "ARRIVALS & DEMAND"
+deck: "After a record 2.25 million in 2025, a SARIMA model on 17 years of monthly data puts the next 12 months essentially flat — with a soft, Ramadan-shifted start to 2026."
+publishedAt: "2026-06-23"
+version: 1
+artifacts: ["arrivals-total-mv", "arrivals-forecast-12m", "arrivals-total-mv-annual"]
+sources: ["Avé Intelligence", "Ministry of Tourism (Maldives)", "MMA series 104"]
+sampleSize: "n=207 monthly observations, Jan 2009–Mar 2026 (annual context to 1988)"
+---
+
+## Executive summary
+
+The Maldives just closed its strongest year on record — **2.25 million arrivals in 2025**, up 9.8% on 2024. Our model thinks that is roughly where things settle. The central forecast puts the **next twelve months (Apr 2026 – Mar 2027) at about 2.24 million arrivals — essentially flat on 2025**, and calendar 2026 on track for ~2.22 million. After four years of post-pandemic catch-up growth, the curve is flattening, not breaking higher.
+
+<Chart artifact="arrivals-forecast-12m" />
+
+The near-term swing factor is a soft start to 2026. March 2026 came in at **161,259 — down 21% year-on-year**, a drop confirmed independently by both Ministry of Tourism and MMA figures and consistent with the timing of Ramadan moving into February–March this year. The model carries that softness forward into a still-seasonal, but no-longer-accelerating, year.
+
+## Key findings
+
+— **2025 was the peak of the recovery, not a new takeoff.** Annual arrivals climbed 155,757 (1988) → 2.25 million (2025); the last leg, 2024→2025, added 9.8%. The forecast adds essentially nothing on top over the next year.
+
+— **Seasonality is intact and sharp.** Expect the usual winter peak — the model puts February 2027 near 240,000 (80% interval ≈ 210,000–274,000) — and the May–June low near 136,000 (80% ≈ 122,000–151,000).
+
+— **The calendar quarter to watch is Q1.** With Ramadan now falling in late February through March, the high-season shoulder is shifting; a repeat of March 2026's weakness would pull the year below 2025.
+
+## Methodology
+
+The forecast is a seasonal ARIMA — SARIMA(1,1,1)(0,1,1)₁₂ fitted in log space, with the 2020 COVID collapse (arrivals were literally zero April–June 2020) absorbed by explicit intervention dummies rather than fitted across or deleted. We score it against a seasonal-naive baseline on a 30-origin rolling-origin backtest, refitting at every origin.
+
+SARIMA earns a **MASE of 0.59 against the baseline's 0.83** (a ~29% improvement; MASE below 1.0 means better than the naive benchmark) and a **sMAPE of 5.6%**. We also tested Prophet and an XGBoost quantile model; on this 17-year monthly history **neither beat the naive baseline** (MASE 2.06 and 1.57 respectively — tree models cannot extrapolate the trend, and Prophet's intervals are poorly calibrated here), so the published forecast is the SARIMA. Every number above is reproducible from the published series and the embedded backtest block.
+
+*Source: Avé Intelligence · Ministry of Tourism (Maldives) monthly reports · MMA series 104 · n=207 monthly observations, Jan 2009–Mar 2026.*

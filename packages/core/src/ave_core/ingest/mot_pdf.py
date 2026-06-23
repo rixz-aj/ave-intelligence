@@ -50,7 +50,8 @@ _MONTHS = {
     )
 }
 _PERIOD = re.compile(r"^\s*([A-Za-z]+)\s+(\d{4})\s*$")
-_MONTH_YEAR = re.compile(r"\b([A-Za-z]+)\s+(\d{4})\b")
+# Month then year, allowing a comma between them ("January-April, 2020 (By Air)").
+_MONTH_YEAR = re.compile(r"\b([A-Za-z]+)[,\s]+(\d{4})\b")
 
 
 def year_listing_url(year: int) -> str:
@@ -143,15 +144,33 @@ def monthly_series_from_reports(texts: list[str]) -> pd.DataFrame:
 
 
 def _find_period(text: str) -> pd.Timestamp:
-    # Strategy 1: a standalone "<Month> <Year>" line (newer reports, e.g. "August 2025").
-    for line in text.splitlines():
-        match = _PERIOD.match(line)
-        if match and match.group(1).lower() in _MONTHS:
-            return pd.Timestamp(
-                year=int(match.group(2)), month=_MONTHS[match.group(1).lower()], day=1
-            )
-    # Strategy 2: the Table-1 title range ("...January - February 2021"). Present in BOTH
-    # old and new layouts; the LAST month-year pair is the report's current month.
+    """Resolve a report's current DATA month from two signals, reconciled.
+
+    Two month markers appear in these PDFs and EITHER can mislead on its own:
+      • the Table-1 title range ("...January - June 2019") — the last month-year pair is
+        normally the data month, but some reports title it with the PRIOR-year comparison
+        range (an April-2022 report titled "...January - April 2021");
+      • a standalone "<Month> <Year>" line — normally the data month, but some reports show
+        their RELEASE month here (a June report published in July shows "July 2019").
+
+    Reconciliation: prefer the title range, EXCEPT when its year differs from the standalone
+    line's year — that mismatch means the title is a prior-year reference, so the standalone
+    line (the report's own dateline) is authoritative. This resolves both failure modes and
+    is corroborated by reconciling the resulting monthly sums against MMA annual totals.
+    """
+    title = _period_from_title(text)
+    standalone = _period_from_dateline(text)
+    if title is not None and standalone is not None and title.year != standalone.year:
+        return standalone
+    if title is not None:
+        return title
+    if standalone is not None:
+        return standalone
+    raise ValueError("could not find a period (no Table-1 title range or '<Month> <Year>' line)")
+
+
+def _period_from_title(text: str) -> pd.Timestamp | None:
+    """Last month-year pair in the first 'ARRIVALS BY NATIONALITY' title line, or None."""
     for line in text.splitlines():
         if "ARRIVALS BY NATIONALITY" in line.upper():
             pairs = [
@@ -162,7 +181,18 @@ def _find_period(text: str) -> pd.Timestamp:
             if pairs:
                 month, year = pairs[-1]
                 return pd.Timestamp(year=int(year), month=_MONTHS[month], day=1)
-    raise ValueError("could not find a period (no '<Month> <Year>' line or Table-1 title)")
+    return None
+
+
+def _period_from_dateline(text: str) -> pd.Timestamp | None:
+    """First standalone '<Month> <Year>' line (the report's dateline), or None."""
+    for line in text.splitlines():
+        match = _PERIOD.match(line)
+        if match and match.group(1).lower() in _MONTHS:
+            return pd.Timestamp(
+                year=int(match.group(2)), month=_MONTHS[match.group(1).lower()], day=1
+            )
+    return None
 
 
 def _find_total_line(text: str) -> str:

@@ -67,6 +67,54 @@ def test_parse_report_handles_near_zero_covid_prior_year_column() -> None:
     assert parsed["ytd"] == 389_770
 
 
+# Some reports title Table 1 with the PRIOR-year comparison range while their dateline
+# carries the true data month — an April-2022 report titled "...- April 2021". When the
+# title year and dateline year disagree, the dateline wins (real: file 7c126ae4...).
+APR_2022_PRIOR_YEAR_TITLE = """
+APRIL 2022
+TOURIST ARRIVALS BY NATIONALITY, January - April 2021
+TOTAL TOURIST ARRIVALS   91,200   145,280   59.3   100.0   389,770   576,000   47.8   100.0
+"""
+
+
+def test_dateline_overrides_prior_year_title_range() -> None:
+    parsed = parse_report(APR_2022_PRIOR_YEAR_TITLE)
+    assert parsed["period"] == pd.Timestamp("2022-04-01")
+    assert parsed["arrivals"] == 145_280
+
+
+# Conversely, a report can carry its RELEASE month as a dateline (a June report published in
+# July shows "July 2019") while Table 1 reads "...- June 2019". Same year ⇒ the title wins
+# (real: file e35f3218...). April 2020 also shows a genuine zero (borders closed).
+JUN_2019_RELEASED_IN_JULY = """
+July 2019
+Table 1: TOURIST ARRIVALS BY NATIONALITY, January - June 2019
+TOTAL TOURIST ARRIVALS   93,786   113,475   21.0   100.0   726,515   862,589   18.7   100.0
+"""
+
+
+def test_title_range_wins_over_release_month_dateline_same_year() -> None:
+    parsed = parse_report(JUN_2019_RELEASED_IN_JULY)
+    assert parsed["period"] == pd.Timestamp("2019-06-01")
+    assert parsed["arrivals"] == 113_475
+    assert parsed["ytd"] == 862_589
+
+
+# Older 2017/2020 titles put a comma before the year and a "(By Air)" suffix; the month-year
+# regex must still resolve them (real: file 50b33b6c..., April 2020 = 0, total lockdown).
+APR_2020_COMMA_TITLE = """
+over 2019
+Table 1: TOURIST ARRIVALS BY NATIONALITY, January-April, 2020 (By Air)
+TOTAL TOURIST ARRIVALS   163,114   0   -100.0   -   646,092   382,775   -40.7   100.0
+"""
+
+
+def test_comma_in_title_range_and_genuine_zero_month() -> None:
+    parsed = parse_report(APR_2020_COMMA_TITLE)
+    assert parsed["period"] == pd.Timestamp("2020-04-01")
+    assert parsed["arrivals"] == 0
+
+
 def test_discover_report_urls_dedupes_and_absolutizes() -> None:
     html = (
         '<a href="/dms/document/aaaa1111.pdf">January 2025</a>'
