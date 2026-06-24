@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-06-23T18:05:58.319796+00:00",
-  "gitSha": "d73b74c",
+  "generatedAt": "2026-06-24T00:25:08.034813+00:00",
+  "gitSha": "47d557c",
   "artifacts": [
     {
       "id": "arrivals-total-mv-annual",
@@ -108,6 +108,88 @@
       "path": "reports/maldives-accommodation-mix-shift.mdx",
       "hash": "sha256:ee18c816ea4875c5c8b589ab2a31acd18dcc958c671df776aa0a85ec308a95be",
       "createdAt": "2026-06-23T18:05:58.319796+00:00"
+    },
+    {
+      "id": "arrivals-china-mv",
+      "type": "series",
+      "metric": "arrivals_china",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_china/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_china/MV/v1.json",
+      "hash": "sha256:2e683446b597f1a08703a7bbcb2839691ea4b65d31bef47d31a0a2d8794551e2",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "arrivals-india-mv",
+      "type": "series",
+      "metric": "arrivals_india",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_india/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_india/MV/v1.json",
+      "hash": "sha256:c619e6a1e791b4839868cfb17efbdc4cb38aefed7fbf4ae34ca5aa8a8cbd9f33",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "arrivals-russia-mv",
+      "type": "series",
+      "metric": "arrivals_russia",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_russia/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_russia/MV/v1.json",
+      "hash": "sha256:b3cc3334963e6073185b6557713a54dfd12af164d6500f47d15ceeb730701fdc",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "arrivals-uk-mv",
+      "type": "series",
+      "metric": "arrivals_uk",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_uk/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_uk/MV/v1.json",
+      "hash": "sha256:55a398c5e1afc7b235b09ec23d3b5ae2baaab379cdec928bf4b7e9eae844e15c",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "arrivals-germany-mv",
+      "type": "series",
+      "metric": "arrivals_germany",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_germany/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_germany/MV/v1.json",
+      "hash": "sha256:1bb2ba2543cccabb2381f9c7895fa22f64049b5c83299e55270b7964218fb574",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "arrivals-italy-mv",
+      "type": "series",
+      "metric": "arrivals_italy",
+      "geo": "MV",
+      "version": 1,
+      "latest": true,
+      "path": "series/arrivals_italy/MV/v1.json",
+      "url": "https://media.avejourneys.com/intelligence/series/arrivals_italy/MV/v1.json",
+      "hash": "sha256:1c82144ac3685f65ce038af74464902f4a24c11e42edc227ac08cb25e12631cb",
+      "createdAt": "2026-06-24T00:22:10.175462+00:00"
+    },
+    {
+      "id": "maldives-source-market-reshuffle",
+      "type": "report",
+      "slug": "maldives-source-market-reshuffle",
+      "version": 1,
+      "latest": true,
+      "path": "reports/maldives-source-market-reshuffle.mdx",
+      "hash": "sha256:f48b4c769e426f2e247eb00e9a041a970b2eb907eb1280c99ecf123c51f45c53",
+      "createdAt": "2026-06-24T00:25:08.034813+00:00"
     }
   ]
 }
