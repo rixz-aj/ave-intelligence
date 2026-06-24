@@ -1,0 +1,49 @@
+---
+schemaVersion: "1.0.0"
+slug: maldives-demand-elasticities
+title: "Income moves Maldives demand; price stays hidden in the data"
+kicker: "DEMAND & ELASTICITIES"
+deck: "An error-correction model finds a real long-run demand relationship in four of six major markets — all strongly income-elastic. The price response, on free annual data, can't be pinned down."
+publishedAt: "2026-06-24"
+version: 1
+artifacts: ["arrivals-china-mv", "arrivals-russia-mv", "arrivals-india-mv", "arrivals-uk-mv", "arrivals-germany-mv", "arrivals-italy-mv"]
+sources: ["Avé Intelligence", "Maldives Monetary Authority (arrivals by country)", "World Bank WDI (GDP, CPI, exchange rates)"]
+sampleSize: "n=25–32 annual obs per market, ~1988–2019 (pre-COVID)"
+---
+
+## Executive summary
+
+The descriptive reports show *that* the Maldives' source markets move. This one asks *why* — and how much. For each major market we fit an **ARDL error-correction model** of arrivals on source-country income (real GDP per capita) and a relative price (the cost of the Maldives versus home, in the traveller's own currency), on the clean pre-COVID years, and run a Pesaran bounds test for a stable long-run relationship.
+
+<Chart artifact="arrivals-by-market" />
+
+The result is honest and split down the middle. **A genuine long-run demand relationship exists in four of the six markets** — China, Russia, the UK and Germany — and every one of them is **strongly income-elastic.** But the **price** side refuses to identify on this data: the signs flip market to market, and only two of six come out with the textbook negative. Income is what free annual data can see; price is not.
+
+## What the model finds
+
+| Market | Long-run relationship | Income elasticity | Price elasticity | Adjustment / yr |
+|---|---|---|---|---|
+| China | yes (5%) | +3.1 | +2.6 ⚠ | 30% |
+| Russia | yes (5%) | +3.9 | −0.3 | 64% |
+| United Kingdom | yes (5%) | +3.9 | −0.1 | 41% |
+| Germany | yes (5%) | +2.3 | +0.6 ⚠ | 56% |
+| India | none found | — | — | — |
+| Italy | none found | — | — | — |
+
+⚠ = a positive price elasticity, i.e. the *wrong* sign for a price effect — a signal the model cannot trust here.
+
+**Income — robust and large.** Every identified market has an income elasticity well above 1: arrivals are a luxury good, and they grew faster than income as source-country middle classes gained not just the money but the *access* to travel long-haul. The magnitudes (roughly +2 to +4) run higher than the tourism literature's usual +1.5 to +2 — partly that access effect, partly the short samples. Read them as "high and positive," not as precise point estimates.
+
+**Adjustment — sensible.** When arrivals drift from their income-implied level, they close 30–64% of the gap each year — equilibrium restored in roughly one-and-a-half to three years. That is exactly how a demand relationship should behave.
+
+**Price — not identified.** Only the UK and Russia produce a correctly-signed (negative) price elasticity, and both are small and imprecise; China and Germany come out positive. A free, annual relative-price proxy built from national CPI and exchange rates is simply too crude to isolate price sensitivity — and there is no free monthly real-exchange-rate series to do better.
+
+## The honest limit
+
+This is the structural layer the platform was built toward, and it is worth being exact about what it delivers. It **can** establish that Maldives demand is real, cointegrated and strongly income-driven in most major markets. It **cannot**, on free data, deliver a trustworthy price elasticity, and it finds **no stable relationship at all** for India (whose series is dominated by its post-2010 boom and 2024 reversal) or Italy. Pinning down price — and tightening the income estimates — would take what the data wall has blocked all along: proprietary forward-booking and rate data, a proper monthly real-exchange-rate series, and a longer clean run without a pandemic in the middle.
+
+## Methodology
+
+Per market, an ARDL(1,1,1) unrestricted error-correction model of log arrivals on log real GDP per capita (World Bank `NY.GDP.PCAP.KD`) and a log relative price (Maldives CPI × exchange rate ÷ source CPI; World Bank `FP.CPI.TOTL`, `PA.NUS.FCRF`), estimated on the contiguous pre-COVID window (~1988–2019, n=25–32). Cointegration by the Pesaran (2001) bounds test, case III; long-run elasticities and the error-correction speed read from the levels terms. Reproducible via `scripts/demand_elasticities.py`.
+
+*Source: Avé Intelligence · MMA arrivals by country · World Bank WDI · n=25–32 annual obs per market, ~1988–2019.*

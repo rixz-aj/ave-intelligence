@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-06-24T00:25:08.034813+00:00",
+  "generatedAt": "2026-06-24T00:42:17.581166+00:00",
   "gitSha": "47d557c",
   "artifacts": [
     {
@@ -190,6 +190,16 @@
       "path": "reports/maldives-source-market-reshuffle.mdx",
       "hash": "sha256:f48b4c769e426f2e247eb00e9a041a970b2eb907eb1280c99ecf123c51f45c53",
       "createdAt": "2026-06-24T00:25:08.034813+00:00"
+    },
+    {
+      "id": "maldives-demand-elasticities",
+      "type": "report",
+      "slug": "maldives-demand-elasticities",
+      "version": 1,
+      "latest": true,
+      "path": "reports/maldives-demand-elasticities.mdx",
+      "hash": "sha256:434f7142e4be03646025466467c3814bf4810166e779f5ffae8253236c1a89fe",
+      "createdAt": "2026-06-24T00:42:17.581166+00:00"
     }
   ]
 }
