@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-06-24T00:42:17.581166+00:00",
+  "generatedAt": "2026-06-24T00:51:35.097343+00:00",
   "gitSha": "47d557c",
   "artifacts": [
     {
@@ -198,8 +198,8 @@
       "version": 1,
       "latest": true,
       "path": "reports/maldives-demand-elasticities.mdx",
-      "hash": "sha256:434f7142e4be03646025466467c3814bf4810166e779f5ffae8253236c1a89fe",
-      "createdAt": "2026-06-24T00:42:17.581166+00:00"
+      "hash": "sha256:75868377fa72922e03f34fac7ef5d4fb492e500e2cbf290c22fbdc157c4cd619",
+      "createdAt": "2026-06-24T00:51:35.097343+00:00"
     }
   ]
 }
